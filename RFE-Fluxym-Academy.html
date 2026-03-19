@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Invoicing Academy | Générateur UBL Fluxym</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #00BCD4;     /* Esker Cyan */
+            --secondary: #0066cc;   /* Esker Blue */
+            --dark: #003d7a;        /* Esker Dark */
+            --accent: #E91E63;      /* Esker Pink */
+            --bg-light: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* --- Header --- */
+        header {
+            background: linear-gradient(135deg, var(--dark), var(--secondary));
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* --- Container --- */
+        .container {
+            max-width: 1000px;
+            margin: -2rem auto 2rem auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* --- Cards --- */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+            border-top: 4px solid var(--primary);
+        }
+
+        .card h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card h2 span {
+            font-size: 1.5rem;
+        }
+
+        /* --- Form Elements --- */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            background-color: var(--bg-light);
+            color: var(--text-main);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+            background-color: white;
+        }
+
+        /* --- Info Box --- */
+        .info-box {
+            background-color: #f0f9ff;
+            border-left: 4px solid var(--primary);
+            padding: 1rem;
+            border-radius: 4px 8px 8px 4px;
+            font-size: 0.9rem;
+            color: #0369a1;
+            margin-top: 1rem;
+            display: none; /* Caché par défaut, géré par JS */
+        }
+        
+        .info-box h4 {
+            margin-bottom: 0.25rem;
+            font-weight: 700;
+        }
+
+        /* --- Button --- */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--secondary), var(--dark));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 61, 122, 0.2);
+            margin-top: 2rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 61, 122, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* --- Pedagogy Section --- */
+        .pedagogy p {
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .badge {
+            display: inline-block;
+            background: #e2e8f0;
+            color: #475569;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .badge.active {
+            background: #dbeafe;
+            color: #0369a1;
+        }
+
+        .success-msg {
+            display: none;
+            color: var(--success);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-top: 1rem;
+            padding: 0.5rem;
+            background: #d1fae5;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>E-Invoicing Academy</h1>
+        <p>Portail interne FLUXYM : Comprendre la réforme et générer des jeux de tests UBL pour Esker.</p>
+    </header>
+
+    <div class="container">
+        
+        <!-- SECTION 1 : THÉORIE -->
+        <div class="card pedagogy">
+            <h2><span>📚</span> Comprendre le Cas d'Usage</h2>
+            <div id="theory-content">
+                <!-- Le contenu changera dynamiquement en JS -->
+                <span class="badge active">Cas A1 / Cas 0</span>
+                <h3>Le Flux Domestique Standard</h3>
+                <p><strong>Scénario :</strong> Le cas de base (appelé "Cas A1" par la FNFE ou flux B2B domestique) concerne une transaction commerciale simple en France : un fournisseur français émet une facture électronique à destination d'un client français.</p>
+                <p><strong>Circuit (Y-Model) :</strong> Le fournisseur transmet sa facture (Factur-X, UBL, CII) à sa PDP ou au PPF. La plateforme vérifie la facture et la transmet à la PDP de l'acheteur. Le destinataire final reçoit la facture dans son ERP.</p>
+                <p><strong>Pourquoi ce cas ?</strong> C'est le socle obligatoire de la réforme de septembre 2026. C'est le flux le plus fréquent qui génère le cycle de vie standard (Déposée > Émise > Reçue).</p>
+            </div>
+        </div>
+
+        <!-- SECTION 2 : PRATIQUE -->
+        <div class="card">
+            <h2><span>⚙️</span> Générateur UBL (Tests Esker)</h2>
+            
+            <div class="form-group">
+                <label for="trigramme">Votre Trigramme (ex: BBA)</label>
+                <input type="text" id="trigramme" placeholder="Entrez 3 lettres..." maxlength="3" value="BBA">
+            </div>
+
+            <div class="form-group">
+                <label for="usecase">Sélectionnez le Cas d'Usage à générer</label>
+                <select id="usecase" onchange="updateInfoBox()">
+                    <option value="0">Cas 0 : Standard (Facture simple sans commande)</option>
+                    <option value="1">Cas 1 : Multi-commande / Lignes multiples</option>
+                    <option value="2" disabled>Cas 2 : Tiers Payeur (Bientôt dispo)</option>
+                    <option value="3" disabled>Cas 3 : Acompte (Bientôt dispo)</option>
+                </select>
+            </div>
+
+            <div class="info-box" id="info-box" style="display: block;">
+                <h4>Configuration générée :</h4>
+                <p id="info-text">Facture standard avec un seul article, TVA à 20%, sans référence de commande.</p>
+            </div>
+
+            <button class="btn" onclick="generateUBL()">📥 Générer et Télécharger le fichier .xml</button>
+            <div id="success-msg" class="success-msg">✅ Fichier généré avec succès !</div>
+        </div>
+
+    </div>
+
+<script>
+    // --- DONNÉES PÉDAGOGIQUES ---
+    const theoryData = {
+        "0": {
+            badge: "Cas A1 / Cas 0",
+            title: "Le Flux Domestique Standard",
+            desc1: "<strong>Scénario :</strong> Le cas de base concerne une transaction commerciale simple : un fournisseur FR émet une facture à un client FR.",
+            desc2: "<strong>Circuit :</strong> Fournisseur > PDP Fournisseur > PDP Acheteur > Acheteur.",
+            info: "Facture standard avec un seul article, TVA à 20%, sans référence de commande."
+        }
+    };
+
+    // --- MISE À JOUR DE L'INTERFACE ---
+    function updateInfoBox() {
+        const select = document.getElementById('usecase').value;
+        const theory = theoryData[select];
+        
+        // Mise à jour de la boîte d'info
+        document.getElementById('info-text').innerHTML = theory.info;
+        
+        // Mise à jour de la section théorie
+        document.getElementById('theory-content').innerHTML = `
+            <span class="badge active">${theory.badge}</span>
+            <h3>${theory.title}</h3>
+            <p>${theory.desc1}</p>
+            <p>${theory.desc2}</p>
+        `;
+        
+        // Cacher le message de succès s'il était affiché
+        document.getElementById('success-msg').style.display = 'none';
+    }
+
+    // --- MOTEUR DE GÉNÉRATION UBL (Traduction EXACTE du PowerShell) ---
+    function generateUBL() {
+        const trigramme = document.getElementById('trigramme').value.toUpperCase() || "UNK";
+        const usecase = document.getElementById('usecase').value;
+        
+        // 1. Calcul des dates et numéros
+        const now = new Date();
+        const yy = String(now.getFullYear()).slice(-2);
+        const MM = String(now.getMonth() + 1).padStart(2, '0');
+        const dd = String(now.getDate()).padStart(2, '0');
+        const HH = String(now.getHours()).padStart(2, '0');
+        const mm = String(now.getMinutes()).padStart(2, '0');
+        const ss = String(now.getSeconds()).padStart(2, '0');
+        
+        const dateStr = `${yy}${MM}${dd}${HH}${mm}${ss}`;
+        const numeroFacture = `${trigramme}-${dateStr}`;
+        
+        const dateFactureXML = `${now.getFullYear()}-${MM}-${dd}`;
+        
+        // Date échéance (+30 jours pour le Cas 0)
+        const echeance = new Date(now);
+        echeance.setDate(echeance.getDate() + 30);
+        const dateEcheanceXML = `${echeance.getFullYear()}-${String(echeance.getMonth()+1).padStart(2,'0')}-${String(echeance.getDate()).padStart(2,'0')}`;
+
+        // 2. Construction du XML (Exactement comme le script PS de Bruno)
+        let xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
+<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:qdt="urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2" xmlns:udt="urn:oasis:names:specification:ubl:schema:xsd:UnqualifiedDataTypes-2">
+\t<cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+\t<cbc:CustomizationID>urn:cen.eu:en16931:2017</cbc:CustomizationID>
+\t<cbc:ProfileID>S1</cbc:ProfileID>
+\t<cbc:ID>${numeroFacture}</cbc:ID>
+\t<cbc:IssueDate>${dateFactureXML}</cbc:IssueDate>
+\t<cbc:DueDate>${dateEcheanceXML}</cbc:DueDate>
+\t<cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>
+\t<cbc:Note>#BAR#B2B</cbc:Note>
+\t<cbc:Note>#PMT#Indemnite forfaitaire pour frais de recouvrement : 40 euros.</cbc:Note>
+\t<cbc:Note>#PMD#En cas de retard de paiement, des penalites egales a 3 fois le taux d'interet legal seront appliquees.</cbc:Note>
+\t<cbc:Note>#AAB#Pas d'escompte pour paiement anticipe.</cbc:Note>
+\t<cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
+\t<cbc:TaxCurrencyCode>EUR</cbc:TaxCurrencyCode>
+\t<cac:AccountingSupplierParty>
+\t\t<cac:Party>
+\t\t\t<cbc:EndpointID schemeID="0225">331518498</cbc:EndpointID>
+\t\t\t<cac:PartyIdentification>
+\t\t\t\t<cbc:ID schemeID="0009">33151849800001</cbc:ID>
+\t\t\t</cac:PartyIdentification>
+\t\t\t<cac:PartyName>
+\t\t\t\t<cbc:Name>ACME FR</cbc:Name>
+\t\t\t</cac:PartyName>
+\t\t\t<cac:PostalAddress>
+\t\t\t\t<cbc:StreetName>12 Rue de la Republique</cbc:StreetName>
+\t\t\t\t<cbc:CityName>LYON</cbc:CityName>
+\t\t\t\t<cbc:PostalZone>69009</cbc:PostalZone>
+\t\t\t\t<cac:Country>
+\t\t\t\t\t<cbc:IdentificationCode>FR</cbc:IdentificationCode>
+\t\t\t\t</cac:Country>
+\t\t\t</cac:PostalAddress>
+\t\t\t<cac:PartyTaxScheme>
+\t\t\t\t<cbc:CompanyID>FR53331518498</cbc:CompanyID>
+\t\t\t\t<cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
+\t\t\t</cac:PartyTaxScheme>
+\t\t\t<cac:PartyLegalEntity>
+\t\t\t\t<cbc:RegistrationName>ACME FR LEGAL</cbc:RegistrationName>
+\t\t\t\t<cbc:CompanyID schemeID="0002">331518498</cbc:CompanyID>
+\t\t\t</cac:PartyLegalEntity>
+\t\t</cac:Party>
+\t</cac:AccountingSupplierParty>
+\t<cac:AccountingCustomerParty>
+\t\t<cac:Party>
+\t\t\t<cbc:EndpointID schemeID="0225">333191120</cbc:EndpointID>
+\t\t\t<cac:PartyIdentification>
+\t\t\t\t<cbc:ID schemeID="0009">33319112028662</cbc:ID>
+\t\t\t</cac:PartyIdentification>
+\t\t\t<cac:PartyName>
+\t\t\t\t<cbc:Name>KREAMOB</cbc:Name>
+\t\t\t</cac:PartyName>
+\t\t\t<cac:PostalAddress>
+\t\t\t\t<cbc:StreetName>10 Avenue du Marechal Foch</cbc:StreetName>
+\t\t\t\t<cbc:CityName>VILLEFRANCHE-SUR-MER</cbc:CityName>
+\t\t\t\t<cbc:PostalZone>06230</cbc:PostalZone>
+\t\t\t\t<cac:Country>
+\t\t\t\t\t<cbc:IdentificationCode>FR</cbc:IdentificationCode>
+\t\t\t\t</cac:Country>
+\t\t\t</cac:PostalAddress>
+\t\t\t<cac:PartyTaxScheme>
+\t\t\t\t<cbc:CompanyID>FR12333191120</cbc:CompanyID>
+\t\t\t\t<cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
+\t\t\t</cac:PartyTaxScheme>
+\t\t\t<cac:PartyLegalEntity>
+\t\t\t\t<cbc:RegistrationName>KREAMOB Legal entity</cbc:RegistrationName>
+\t\t\t\t<cbc:CompanyID schemeID="0002">333191120</cbc:CompanyID>
+\t\t\t</cac:PartyLegalEntity>
+\t\t</cac:Party>
+\t</cac:AccountingCustomerParty>
+\t<cac:TaxTotal>
+\t\t<cbc:TaxAmount currencyID="EUR">200.00</cbc:TaxAmount>
+\t\t<cac:TaxSubtotal>
+\t\t\t<cbc:TaxableAmount currencyID="EUR">1000.00</cbc:TaxableAmount>
+\t\t\t<cbc:TaxAmount currencyID="EUR">200.00</cbc:TaxAmount>
+\t\t\t<cac:TaxCategory><cbc:ID>S</cbc:ID><cbc:Percent>20.00</cbc:Percent><cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme></cac:TaxCategory>
+\t\t</cac:TaxSubtotal>
+\t</cac:TaxTotal>
+\t<cac:LegalMonetaryTotal>
+\t\t<cbc:LineExtensionAmount currencyID="EUR">1000.00</cbc:LineExtensionAmount>
+\t\t<cbc:TaxExclusiveAmount currencyID="EUR">1000.00</cbc:TaxExclusiveAmount>
+\t\t<cbc:TaxInclusiveAmount currencyID="EUR">1200.00</cbc:TaxInclusiveAmount>
+\t\t<cbc:PayableAmount currencyID="EUR">1200.00</cbc:PayableAmount>
+\t</cac:LegalMonetaryTotal>
+\t<cac:InvoiceLine>
+\t\t<cbc:ID>1</cbc:ID>
+\t\t<cbc:InvoicedQuantity unitCode="C62">1.00</cbc:InvoicedQuantity>
+\t\t<cbc:LineExtensionAmount currencyID="EUR">1000.00</cbc:LineExtensionAmount>
+\t\t<cac:Item>
+\t\t\t<cbc:Name>Prestation standard sans commande</cbc:Name>
+\t\t\t<cac:ClassifiedTaxCategory><cbc:ID>S</cbc:ID><cbc:Percent>20.00</cbc:Percent><cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme></cac:ClassifiedTaxCategory>
+\t\t</cac:Item>
+\t\t<cac:Price><cbc:PriceAmount currencyID="EUR">1000.00</cbc:PriceAmount></cac:Price>
+\t</cac:InvoiceLine>
+</Invoice>`;
+
+        // 3. Création du fichier et déclenchement du téléchargement
+        const blob = new Blob([xmlContent], { type: "application/xml" });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        
+        // Le nom du fichier correspond exactement au format attendu (identique à ton fichier témoin)
+        const fileName = `${numeroFacture}_Cas d'usage 0 - Standard.xml`;
+        
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        
+        // Nettoyage
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+
+        // 4. Afficher le message de succès
+        const msg = document.getElementById('success-msg');
+        msg.innerHTML = `✅ Fichier <strong>${fileName}</strong> généré et téléchargé !`;
+        msg.style.display = 'block';
+    }
+</script>
+</body>
+</html>
