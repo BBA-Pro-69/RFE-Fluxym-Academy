@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Miriam+Libre:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="./assets/favicon-Fluxym-V2.png" sizes="32x32" />
     
     <style>
         :root {
@@ -339,15 +340,18 @@
         #theory-content {
             transition: opacity 0.3s ease;
         }
+        .main-logo {
+            max-width: 220px;
+            height: auto;
+            margin-bottom: 2rem;
+            filter: brightness(0) invert(1); /* Force le logo en blanc pour contraster avec le fond bleu nuit */
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo-text">
-            <div class="fluxym-triangle"></div>
-            FLUXYM
-        </div>
+        <img src="./assets/fluxym_logo_2018_sansdescriptif_cmyk.png" alt="Fluxym Logo" class="main-logo">
         <h1>E-Invoicing Academy</h1>
         <p>Portail de génération de flux UBL pour validation et intégration Esker.</p>
     </header>
